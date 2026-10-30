@@ -1,0 +1,888 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Territorios del cuerpo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@500;600&family=Yellowtail&family=Nunito+Sans:ital,wght@0,400;0,700;1,400&display=swap">
+
+
+<style>
+/* Layout: hoja de planner sobre fondo aguamarina; recortes de papel, cinta adhesiva, etiquetas con sombra sólida */
+:root{
+  --bg:#c4fbff; --sheet:#ffffff; --cream:#fdf0da; --sky:#d6fdff;
+  --ink:#1f2a50; --ink-soft:#4b5678; --rule:#c6cddd; --line:#1f2a50;
+  --label-bg:#1f2a50; --label-fg:#ffd257;
+  --yellow:#ffd257; --on-yellow:#1f2a50; --red:#c93232; --on-red:#ffffff;
+  --blue:#1769c2; --hand:#c93232; --circle:#1f2a50; --title-shadow:#ffd257;
+  --drop:rgba(31,42,80,.28);
+  --ok:#13703f; --bad:#b92525;
+  --f-display:"Bebas Neue","Arial Narrow",Impact,sans-serif;
+  --f-label:"Oswald","Arial Narrow",system-ui,sans-serif;
+  --f-body:"Nunito Sans",system-ui,"Segoe UI",sans-serif;
+  --f-hand:"Yellowtail","Segoe Script",cursive;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1730; --sheet:#1a2342; --cream:#262f52; --sky:#1f3a4d;
+  --ink:#f3f1e6; --ink-soft:#b8c0d8; --rule:#3a4568; --line:#f3f1e6;
+  --label-bg:#ffd257; --label-fg:#1f2a50;
+  --blue:#7db8ff; --hand:#ffd257; --circle:#2b3768; --title-shadow:#c93232;
+  --drop:rgba(0,0,0,.5);
+  --ok:#6fdc9c; --bad:#ff9a90; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1730; --sheet:#1a2342; --cream:#262f52; --sky:#1f3a4d;
+  --ink:#f3f1e6; --ink-soft:#b8c0d8; --rule:#3a4568; --line:#f3f1e6;
+  --label-bg:#ffd257; --label-fg:#1f2a50;
+  --blue:#7db8ff; --hand:#ffd257; --circle:#2b3768; --title-shadow:#c93232;
+  --drop:rgba(0,0,0,.5);
+  --ok:#6fdc9c; --bad:#ff9a90; color-scheme:dark}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg); color:var(--ink); font-family:var(--f-body); font-size:17px; line-height:1.55}
+
+/* Fondo decorativo */
+.deco{position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:0}
+.deco i{position:absolute; display:block}
+.deco .c1{width:300px; height:300px; border-radius:50%; background:var(--circle); left:110px; top:-130px}
+.deco .c2{width:420px; height:420px; border-radius:50%; background:var(--yellow); right:-110px; bottom:-170px}
+.deco .dots{width:10px; height:230px; right:18px; top:30%; background:radial-gradient(circle,var(--red) 4.5px,transparent 5px) 0 0/10px 24px repeat-y}
+
+.app{position:relative; z-index:1; display:grid; grid-template-columns:240px minmax(0,1fr); min-height:100%}
+
+/* Índice: lista de tareas */
+nav.index{
+  position:sticky; top:env(safe-area-inset-top,0px); height:100vh; overflow:auto;
+  padding-block:24px 80px; padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:16px;
+  background:var(--sheet); box-shadow:4px 0 16px var(--drop);
+}
+.brand{font:400 1.7rem/1 var(--f-display); letter-spacing:.03em; background:var(--label-bg); color:var(--label-fg); padding:12px 12px 10px; margin:0 8px 8px 0; box-shadow:6px -6px 0 var(--red)}
+.brand-sub{font-family:var(--f-hand); color:var(--hand); font-size:1.25rem; margin:10px 0 16px}
+nav.index ol{list-style:none; margin:0; padding:0; display:grid; gap:2px}
+nav.index button{
+  width:100%; text-align:left; background:none; border:0; border-bottom:1px solid var(--rule); color:var(--ink); cursor:pointer;
+  font:600 .84rem/1.3 var(--f-body); padding:9px 6px; display:flex; gap:10px; align-items:baseline;
+}
+nav.index button span.n{display:none}
+nav.index button::before{content:""; flex:none; width:10px; height:10px; border:2.5px solid var(--red); border-radius:50%; transform:translateY(1px)}
+nav.index button:hover{background:var(--cream)}
+nav.index button[aria-current="true"]{background:var(--yellow); color:var(--on-yellow)}
+nav.index button[aria-current="true"]::before{background:var(--red)}
+
+/* Lámina = hoja */
+main{padding-block:28px 100px; padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px)); min-width:0}
+.slide{
+  position:relative; max-width:960px; margin:0 auto; animation:in .35s ease;
+  background:var(--sheet); padding:38px 40px 36px; border-bottom:14px solid var(--label-bg);
+  box-shadow:12px 14px 26px var(--drop);
+}
+.slide::before{ /* cinta adhesiva */
+  content:""; position:absolute; right:-8px; top:-12px; width:112px; height:28px; background:var(--yellow);
+  transform:rotate(28deg); pointer-events:none;
+  clip-path:polygon(0 0,100% 0,94% 50%,100% 100%,0 100%,6% 50%);
+}
+.slide::after{ /* tira en el margen */
+  content:""; position:absolute; left:0; top:130px; width:9px; height:96px; background:var(--label-bg); pointer-events:none;
+}
+.slide:nth-of-type(even)::after{background:var(--yellow)}
+.slide:nth-of-type(even)::before{background:var(--red)}
+@keyframes in{from{transform:translateY(8px)}to{transform:none}}
+@media (prefers-reduced-motion:reduce){.slide{animation:none}.flip-inner{transition:none!important}button{transition:none!important}}
+
+/* Tipografía */
+.eyebrow{
+  display:inline-block; max-width:calc(100% - 70px); font:500 .8rem/1.25 var(--f-label); letter-spacing:.08em; text-transform:uppercase;
+  background:var(--label-bg); color:var(--label-fg); padding:7px 12px; margin:6px 0 14px; box-shadow:5px -5px 0 var(--red);
+}
+h1,h2,h3{text-wrap:balance; margin:0}
+h1,h2{font-family:var(--f-display); font-weight:400; color:var(--ink); text-shadow:3px 3px 0 var(--title-shadow); letter-spacing:.015em}
+h1{font-size:clamp(3.4rem,7.2vw,6.4rem); line-height:.92}
+h2{
+  font-size:clamp(2.3rem,5vw,3.4rem); line-height:1; margin-bottom:16px; padding-bottom:16px;
+  background:radial-gradient(circle,var(--blue) 2.5px,transparent 3px) 0 100%/18px 8px repeat-x;
+}
+h3{font:600 1.16rem/1.25 var(--f-label); margin-bottom:6px}
+p{margin:0 0 12px; max-width:65ch}
+.lead{font-size:1.2rem; color:var(--ink-soft)}
+mark{background:var(--yellow); color:var(--on-yellow); padding:0 .2em}
+.hand{font-family:var(--f-hand); color:var(--hand); font-size:1.6rem; line-height:1.2}
+.sheet{background:var(--cream); padding:22px}
+.stack{display:grid; gap:18px}
+.grid2{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px}
+.grid3{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px}
+.grid4{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:18px 14px}
+.src{font-size:.85rem; color:var(--ink-soft); font-style:italic}
+
+/* Nota ¡Importante! */
+.imp-tag{display:inline-block; font:600 .85rem/1 var(--f-label); letter-spacing:.06em; text-transform:uppercase; background:var(--red); color:var(--on-red); padding:7px 12px; margin:-34px 0 12px; position:relative}
+.sheet:has(>.imp-tag){background:var(--yellow); color:var(--on-yellow); margin-top:30px!important; padding-top:22px}
+.sheet:has(>.imp-tag) mark{background:none; color:inherit; font-weight:700; text-decoration:underline; text-underline-offset:3px}
+
+/* Botones: etiquetas de papel */
+button.chip,button.btn{
+  font:500 .95rem/1.2 var(--f-label); letter-spacing:.02em; cursor:pointer; border-radius:2px; padding:8px 15px;
+  border:2px solid var(--line); background:var(--sheet); color:var(--ink); box-shadow:3px 3px 0 var(--line);
+  transition:transform .08s,box-shadow .08s;
+}
+button.chip:active,button.btn:active{transform:translate(3px,3px); box-shadow:0 0 0 var(--line)}
+button.chip[aria-pressed="true"],button.chip[aria-selected="true"]{background:var(--label-bg); color:var(--label-fg); border-color:var(--label-bg)}
+button.btn.primary{background:var(--red); color:var(--on-red)}
+button.btn:disabled{opacity:.45; cursor:default; box-shadow:none; transform:none}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--blue); outline-offset:2px}
+.row{display:flex; flex-wrap:wrap; gap:10px; align-items:center}
+
+/* Portada */
+.cover{display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:28px; align-items:end; padding-top:2vh}
+.stamp{
+  background:var(--cream); padding:30px 20px 20px; transform:rotate(-1.5deg);
+  -webkit-mask:radial-gradient(circle 8px at 50% 0,transparent 98%,#000) 0 0/26px 100% repeat-x;
+  mask:radial-gradient(circle 8px at 50% 0,transparent 98%,#000) 0 0/26px 100% repeat-x;
+}
+.stamp dl{margin:0; display:grid; grid-template-columns:auto 1fr; gap:8px 12px; font-size:.95rem}
+.stamp dt{font:600 .78rem/1.7 var(--f-label); text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft)}
+.stamp dd{margin:0}
+
+/* Etimología */
+.word{display:flex; flex-wrap:wrap; gap:6px; font-family:var(--f-display); font-size:clamp(2.8rem,8vw,4.8rem); line-height:1}
+.word button{font:inherit; color:inherit; background:none; border:0; border-bottom:5px solid var(--line); padding:4px 8px 0; cursor:pointer}
+.word button[aria-pressed="true"]{background:var(--yellow); color:var(--on-yellow)}
+.word .plus{color:var(--ink-soft)}
+.meaning{min-height:4.5em}
+
+/* Pestañas */
+[role="tablist"]{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:16px}
+.panel h3{font-size:1.45rem}
+.kv{display:grid; grid-template-columns:150px minmax(0,1fr); gap:8px 16px; margin-top:10px}
+.kv dt{font:600 .82rem/1.7 var(--f-label); text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft)}
+.kv dd{margin:0}
+
+/* Tarjetas que giran */
+.flip{position:relative; perspective:900px; min-height:240px; cursor:pointer; background:none; border:0; padding:0; text-align:left; color:inherit; font:inherit}
+.flip::after{content:""; position:absolute; top:-9px; left:50%; width:62px; height:20px; margin-left:-31px; background:var(--yellow); transform:rotate(-4deg); pointer-events:none; z-index:2; clip-path:polygon(0 0,100% 0,95% 50%,100% 100%,0 100%,5% 50%)}
+.flip-inner{position:relative; height:100%; min-height:240px; transition:transform .5s; transform-style:preserve-3d}
+.flip[aria-pressed="true"] .flip-inner{transform:rotateY(180deg)}
+.face{position:absolute; inset:0; backface-visibility:hidden; background:var(--cream); padding:24px 15px 14px; display:flex; flex-direction:column; gap:6px; overflow:auto; box-shadow:3px 4px 10px var(--drop)}
+.face.front{justify-content:space-between}
+.face.front .term{font:400 1.8rem/1 var(--f-display); letter-spacing:.02em}
+.face.front .hint{font-family:var(--f-hand); color:var(--hand); font-size:1.2rem}
+.face.back{transform:rotateY(180deg); background:var(--sky); font-size:.92rem}
+.face.back strong{font-family:var(--f-label); font-weight:600}
+
+/* Acordeón */
+details{background:var(--sheet); border:1.5px solid var(--line); padding:0 18px}
+details+details{margin-top:10px}
+summary{cursor:pointer; padding:13px 0; font:500 1.1rem/1.3 var(--f-label); list-style:none; display:flex; justify-content:space-between; gap:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+"; color:var(--hand); font-size:1.4rem; line-height:1}
+details[open] summary::after{content:"–"}
+details>div{padding-bottom:12px}
+
+/* Fases */
+.phases{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:0; border:2px solid var(--line); margin-bottom:0}
+.phases button{font:500 1.05rem/1.2 var(--f-label); padding:12px 14px; border:0; border-right:2px solid var(--line); background:var(--sheet); color:var(--ink); cursor:pointer; text-align:left}
+.phases button:last-child{border-right:0}
+.phases button small{display:block; font:400 .82rem/1.3 var(--f-body); margin-top:2px}
+.phases button[aria-selected="true"]{background:var(--label-bg); color:var(--label-fg)}
+ul.ticks{margin:0; padding:0; list-style:none; display:grid; gap:8px}
+ul.ticks li{padding-left:24px; position:relative; max-width:65ch}
+ul.ticks li::before{content:""; position:absolute; left:2px; top:.5em; width:10px; height:10px; border-radius:50%; background:var(--blue)}
+
+/* Sentidos */
+.senses{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px}
+.senses button{padding:13px 6px; border:2px solid var(--line); background:var(--sheet); color:var(--ink); cursor:pointer; font:500 .98rem/1.2 var(--f-label); display:grid; gap:6px; justify-items:center; box-shadow:3px 3px 0 var(--line)}
+.senses button svg{width:28px; height:28px; stroke:currentColor; fill:none; stroke-width:1.8}
+.senses button[aria-pressed="true"]{background:var(--yellow); color:var(--on-yellow)}
+
+/* Juego */
+.game-card{font-size:1.25rem; font-style:italic; min-height:3.5em; margin:0; padding:6px 0; background:repeating-linear-gradient(transparent 0 calc(1.55em - 1px),var(--rule) calc(1.55em - 1px) 1.55em)}
+.score{font:400 2.3rem/1 var(--f-display); font-variant-numeric:tabular-nums}
+.feedback{min-height:3em; font-size:.98rem; margin:0}
+.feedback.ok{color:var(--ok); font-weight:700} .feedback.bad{color:var(--bad); font-weight:700}
+.meter{height:7px; background:var(--rule); overflow:hidden}
+.meter>i{display:block; height:100%; background:var(--red); width:0; transition:width .3s}
+
+.note{font-size:1.05rem; border-left:5px solid var(--yellow); padding-left:16px; max-width:65ch}
+
+/* Check List */
+.cl-title{font:400 2.1rem/1 var(--f-display); letter-spacing:.02em; margin:0 0 8px}
+.cl-title .hand{margin-left:4px; font-size:2rem}
+#checklist,#quizBox{
+  padding-top:30px;
+  -webkit-mask:radial-gradient(circle 8px at 50% 0,transparent 98%,#000) 0 0/26px 100% repeat-x;
+  mask:radial-gradient(circle 8px at 50% 0,transparent 98%,#000) 0 0/26px 100% repeat-x;
+}
+.check{display:flex; gap:12px; align-items:flex-start; padding:11px 0; border-bottom:1px solid var(--rule)}
+.check:last-child{border-bottom:0}
+.check input{appearance:none; -webkit-appearance:none; width:20px; height:20px; margin:3px 0 0; flex:none; border:2px solid var(--line); background:var(--sheet); cursor:pointer; display:grid; place-content:center}
+.check input:checked{background:var(--label-bg)}
+.check input:checked::after{content:"✓"; color:var(--label-fg); font-size:14px; line-height:1; font-weight:700}
+.check label{cursor:pointer}
+.check label b{font-family:var(--f-label); font-weight:600}
+.check.done label{color:var(--ink-soft)}
+.check .tag{font:500 .72rem/1 var(--f-label); text-transform:uppercase; letter-spacing:.06em; padding:3px 6px; background:var(--sky); margin-left:6px; vertical-align:2px}
+
+/* Quiz */
+.q{padding:14px 0; border-bottom:1px solid var(--rule)}
+.q:last-of-type{border-bottom:0}
+.q p.qt{font-weight:700}
+.opts{display:grid; gap:7px}
+.opts button{text-align:left; padding:9px 13px; border:1.5px solid var(--line); background:var(--sheet); color:var(--ink); cursor:pointer; font:inherit; font-size:.98rem}
+.opts button.right{border-color:var(--ok); color:var(--ok); font-weight:700}
+.opts button.right::before{content:"✓ "}
+.opts button.wrong{border-color:var(--bad); color:var(--bad); text-decoration:line-through}
+.opts button.wrong::before{content:"✗ "}
+.opts button:disabled{cursor:default}
+.why{font-size:.92rem; color:var(--ink-soft); margin-top:6px}
+
+/* Barra inferior */
+.pager{position:fixed; left:240px; right:0; bottom:0; display:flex; justify-content:space-between; align-items:center; gap:10px; min-height:62px;
+  padding-block:10px calc(10px + env(safe-area-inset-bottom,0px)); padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px));
+  background:var(--sheet); border-top:3px solid var(--label-bg); z-index:5}
+.pager .count{font:500 .95rem/1 var(--f-label); color:var(--ink-soft); font-variant-numeric:tabular-nums}
+.progress{position:fixed; left:240px; right:0; bottom:calc(62px + env(safe-area-inset-bottom,0px)); height:4px; z-index:6}
+.progress i{display:block; height:100%; background:var(--red); width:0; transition:width .3s}
+.menu-btn{display:none}
+
+@media (max-width:1240px){.deco .dots{display:none}}
+@media (max-width:860px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  nav.index{position:fixed; inset:0 auto 0 0; width:min(300px,85vw); height:100%; z-index:20; transform:translateX(-102%); transition:transform .25s; padding-top:calc(24px + env(safe-area-inset-top,0px))}
+  nav.index.open{transform:none; box-shadow:0 0 0 100vmax rgba(0,0,0,.35)}
+  .pager,.progress{left:0}
+  .menu-btn{display:inline-block}
+  .slide{padding:38px 20px 28px}
+  .slide::before{width:84px; height:24px; top:-10px}
+  .slide::after{width:6px}
+  .deco .c1{left:-110px}
+  .deco .c2{width:280px; height:280px}
+  .cover,.grid2{grid-template-columns:minmax(0,1fr)}
+  .grid3,.grid4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .senses{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .phases{grid-template-columns:minmax(0,1fr)}
+  .phases button{border-right:0; border-bottom:2px solid var(--line)}
+  .phases button:last-child{border-bottom:0}
+  .kv{grid-template-columns:minmax(0,1fr); gap:2px 0}
+  .kv dd{margin-bottom:8px}
+}
+.refs{list-style:none; margin:0; padding:0}
+.refs li{padding-left:2em; text-indent:-2em; margin:0 0 12px; overflow-wrap:anywhere}
+@media (max-width:480px){.grid3,.grid4{grid-template-columns:minmax(0,1fr)} body{font-size:16px}}
+</style>
+
+<div class="deco" aria-hidden="true"><i class="c1"></i><i class="c2"></i><i class="dots"></i></div>
+<div class="app">
+  <nav class="index" id="index" aria-label="Contenido de la presentación">
+    <p class="brand">Territorios del cuerpo</p>
+    <p class="brand-sub">diario de campo · parte 1</p>
+    <ol id="toc"></ol>
+  </nav>
+
+  <main id="main">
+
+    <!-- 1 -->
+    <section class="slide" id="inicio" data-title="Portada">
+      <div class="cover">
+        <div class="stack">
+          <p class="eyebrow">Proyecto de aula · Ciclo de formación en Humanidades</p>
+          <h1>Territorios<br>del cuerpo</h1>
+          <p class="lead">Etnografías del parque y la clínica. Aprender a mirar lugares conocidos como si llegáramos por primera vez: observar, conversar, registrar y escribir sobre la manera como las personas usan y cuidan su cuerpo.</p>
+          <p class="hand">“Se aprende a investigar investigando.”</p>
+          <p class="src">Sautu (1997, p. 31, como se citó en Atencio Ramírez et al., 2011, p. 14).</p>
+        </div>
+        <div class="stamp" aria-label="Ficha del proyecto">
+          <dl>
+            <dt>Campo</dt><dd>Un parque de la localidad o la clínica de odontología de la universidad</dd>
+            <dt>Tiempo</dt><dd>Un mes de observación y convivencia</dd>
+            <dt>Técnicas</dt><dd>Observación participante, entrevista semiestructurada, historias de vida</dd>
+            <dt>Producto</dt><dd>Primer informe etnográfico + archivo de Drive con evidencias, entregado en el aula virtual</dd>
+            <dt>Ética</dt><dd>Consentimiento informado para todo</dd>
+          </dl>
+        </div>
+      </div>
+      <p class="src" style="margin-top:28px">Usa las flechas ← → del teclado o los botones de abajo para avanzar.</p>
+    </section>
+
+    <!-- 2 -->
+    <section class="slide" id="palabra" data-title="¿De dónde viene la palabra?" hidden>
+      <p class="eyebrow">Concepto básico</p>
+      <h2>¿Qué significa “etnografía”?</h2>
+      <p>Toca cada parte de la palabra para descomponerla.</p>
+      <div class="sheet stack">
+        <div class="word" id="word">
+          <button type="button" data-k="ethnos" aria-pressed="false">etno</button><span class="plus">+</span>
+          <button type="button" data-k="graphein" aria-pressed="false">grafía</button>
+        </div>
+        <div class="meaning" id="meaning" aria-live="polite"><p class="hand">← elige una parte</p></div>
+      </div>
+      <div class="sheet" style="margin-top:16px">
+        <span class="imp-tag">¡Importante!</span><h3>En una frase</h3>
+        <p>La etnografía es <mark>el estudio descriptivo de la forma de vida de un grupo humano, hecho desde adentro</mark>: el investigador convive con las personas, observa lo que hacen, escucha lo que dicen y después lo escribe. Es al mismo tiempo <b>un método</b> (cómo se investiga) y <b>un texto</b> (el informe que se escribe) (Guber, 2001).</p>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="slide" id="diferencias" data-title="Etnografía, etnología, antropología" hidden>
+      <p class="eyebrow">No son lo mismo</p>
+      <h2>Tres palabras que suelen confundirse</h2>
+      <div role="tablist" aria-label="Comparar disciplinas" id="discTabs">
+        <button class="chip" role="tab" aria-selected="true" data-p="d1">Etnografía</button>
+        <button class="chip" role="tab" aria-selected="false" data-p="d2">Etnología</button>
+        <button class="chip" role="tab" aria-selected="false" data-p="d3">Antropología</button>
+      </div>
+      <div class="sheet panel" id="d1" role="tabpanel">
+        <h3>Etnografía · describir</h3>
+        <p>Trabajo de campo con un grupo concreto y el texto que resulta de él.</p>
+        <dl class="kv">
+          <dt>Pregunta típica</dt><dd>¿Cómo viven, qué hacen y qué significa para ellos?</dd>
+          <dt>Escala</dt><dd>Un grupo, un lugar, un tiempo: “quienes entrenan al amanecer en un parque” o “quienes esperan turno en la clínica”.</dd>
+          <dt>Herramientas</dt><dd>Observación participante, entrevistas, historias de vida, diario de campo.</dd>
+          <dt>En el proyecto</dt><dd><mark>Esto es lo que vamos a hacer.</mark></dd>
+        </dl>
+      </div>
+      <div class="sheet panel" id="d2" role="tabpanel" hidden>
+        <h3>Etnología · comparar</h3>
+        <p>Toma muchas etnografías y las compara para encontrar semejanzas, diferencias y explicaciones más generales.</p>
+        <dl class="kv">
+          <dt>Pregunta típica</dt><dd>¿Por qué distintos grupos organizan de forma parecida o diferente su familia, su economía o sus rituales?</dd>
+          <dt>Escala</dt><dd>Varias culturas o comunidades a la vez.</dd>
+          <dt>Herramientas</dt><dd>Análisis comparativo y teórico a partir de datos etnográficos.</dd>
+          <dt>Relación</dt><dd>La etnografía le entrega la materia prima.</dd>
+        </dl>
+      </div>
+      <div class="sheet panel" id="d3" role="tabpanel" hidden>
+        <h3>Antropología · comprender lo humano</h3>
+        <p>La ciencia que estudia al ser humano en su diversidad cultural, social, biológica e histórica. La etnografía es su método más característico.</p>
+        <dl class="kv">
+          <dt>Pregunta típica</dt><dd>¿Qué significa ser humano?</dd>
+          <dt>Escala</dt><dd>La humanidad entera, en el tiempo y en el espacio.</dd>
+          <dt>Ramas</dt><dd>Social y cultural, arqueología, biológica, lingüística.</dd>
+          <dt>Relación</dt><dd>Contiene a la etnografía y a la etnología.</dd>
+        </dl>
+      </div>
+      <p class="hand" style="margin-top:16px">Etnografía → describe · Etnología → compara · Antropología → comprende</p>
+      <p class="src">Distinción basada en Lévi-Strauss (1958/1995).</p>
+    </section>
+
+    <!-- 4 -->
+    <section class="slide" id="historia" data-title="Un poco de historia" hidden>
+      <p class="eyebrow">De dónde viene el método</p>
+      <h2>De la isla lejana al parque del barrio</h2>
+      <div class="grid3">
+        <div class="sheet">
+          <p class="hand">Siglo XIX</p>
+          <h3>Antropología “de sillón”</h3>
+          <p>Los estudiosos escribían sobre otros pueblos a partir de relatos de viajeros y misioneros, sin ir al lugar.</p>
+        </div>
+        <div class="sheet">
+          <p class="hand">1922</p>
+          <h3>Malinowski y el trabajo de campo</h3>
+          <p>En <i>Los argonautas del Pacífico occidental</i> (Malinowski, 1922) muestra que hay que vivir con la gente, aprender su lengua y participar de su vida diaria: nace la <mark>observación participante</mark>.</p>
+        </div>
+        <div class="sheet">
+          <p class="hand">1970 en adelante</p>
+          <h3>Lo cercano también es campo</h3>
+          <p>Geertz (1973) habla de la “descripción densa”; Rosana Guber (1991/2004) estudia al “salvaje metropolitano”. La ciudad, el barrio y las instituciones se vuelven lugares de estudio.</p>
+        </div>
+      </div>
+      <div class="sheet" style="margin-top:16px">
+        <p style="margin:0">Hoy la etnografía se usa en educación, salud, deporte, diseño, mercadeo, derecho, ingeniería y comunicación: <b>cualquier profesión que necesite entender a las personas en su contexto real</b> puede usarla. Por eso la estudiamos aunque no seamos antropólogos.</p>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="slide" id="conceptos" data-title="Conceptos básicos" hidden>
+      <p class="eyebrow">Vocabulario del etnógrafo</p>
+      <h2>Ocho conceptos para no perderse</h2>
+      <p>Toca cada tarjeta para darle la vuelta.</p>
+      <div class="grid4" id="cards"></div>
+      <p class="src" style="margin-top:12px">Fuentes: cultura y descripción densa (Geertz, 1973); trabajo de campo e informante clave (Atencio Ramírez et al., 2011); perspectivas émica y ética (Pike, 1967); extrañamiento (Lins Ribeiro, 1989); reflexividad (Guber, 2001).</p>
+    </section>
+
+    <!-- 6 -->
+    <section class="slide" id="extranar" data-title="Hacer extraño lo familiar" hidden>
+      <p class="eyebrow">La actitud etnográfica</p>
+      <h2>El reto: hacer extraño lo familiar</h2>
+      <div class="grid2">
+        <div class="stack">
+          <p>Cuando estudiamos un lugar conocido, el problema es que <b>todo nos parece normal</b>. Trotar siempre en el mismo sentido, saludar al vendedor de agua o esperar turno sin mirarse son cosas que se hacen sin pensar.</p>
+          <p>La etnografía nos pide <mark>mirar esas rutinas como si fueran costumbres de un pueblo desconocido</mark> y preguntarnos: ¿por qué se hace así?, ¿quién lo decidió?, ¿qué significa para quienes lo hacen?</p>
+          <p class="hand">Lo obvio también tiene reglas.</p>
+          <p class="src">Sobre el extrañamiento: Lins Ribeiro (1989).</p>
+        </div>
+        <div class="sheet">
+          <h3>Prueba: dos lugares vistos por alguien de otro planeta</h3>
+          <p class="note" style="font-style:italic"><b>Parque.</b> “Al amanecer, los habitantes dan vueltas a un círculo de tierra, todos en la misma dirección y sin llegar a ningún lado. Quien anda más lento se aparta hacia el borde. Nadie lo ordena, y sin embargo casi todos lo cumplen.”</p>
+          <p class="note" style="font-style:italic"><b>Clínica.</b> “En la sala de espera, las personas se sientan separadas y bajan la voz. Cuando alguien de blanco dice un nombre, una de ellas se levanta y desaparece tras una puerta. Al salir, habla con dificultad y las demás la miran.”</p>
+          <p class="src">Nada de esto es raro para nosotros. Escrito así, aparecen reglas que nadie dijo en voz alta. Los ejemplos son ilustrativos.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6b -->
+    <section class="slide" id="escenarios" data-title="Nuestros dos campos" hidden>
+      <p class="eyebrow">Dónde haremos el trabajo de campo</p>
+      <h2>Nuestros dos campos</h2>
+      <p>Cada programa estudia un lugar ligado a su profesión: el parque, donde la gente se mueve y juega, o la clínica, donde se examina y se cuida.</p>
+      <div role="tablist" aria-label="Campos del proyecto" id="fieldTabs">
+        <button class="chip" role="tab" aria-selected="true" data-p="c1">Parque de la localidad</button>
+        <button class="chip" role="tab" aria-selected="false" data-p="c2">Clínica de odontología</button>
+      </div>
+      <div class="sheet panel" id="c1" role="tabpanel">
+        <h3>Cultura Física, Deporte y Recreación</h3>
+        <dl class="kv">
+          <dt>Qué mirar</dt><dd>Usos del cuerpo, juego, entrenamiento, reglas no escritas, convivencia, quién ocupa cada zona y a qué hora.</dd>
+          <dt>Preguntas posibles</dt><dd>¿Cómo se reparten el parque los distintos grupos? ¿Quién no lo usa, y por qué?</dd>
+          <dt>Historias de vida</dt><dd>Entrenador o entrenadora, adulto mayor que lo usa a diario, vendedor o vendedora.</dd>
+          <dt>El reto</dt><dd>Nadie autoriza la entrada, así que hay que ganarse la confianza de la gente. Cada grupo elige un solo parque.</dd>
+        </dl>
+      </div>
+      <div class="sheet panel" id="c2" role="tabpanel" hidden>
+        <h3>Odontología</h3>
+        <dl class="kv">
+          <dt>Qué mirar</dt><dd>Espera, miedo y confianza, lenguaje técnico y cotidiano, jerarquías, rutinas de cuidado.</dd>
+          <dt>Preguntas posibles</dt><dd>¿Cómo se construye la confianza entre paciente y estudiante? ¿Qué hacen y sienten las personas mientras esperan?</dd>
+          <dt>Historias de vida</dt><dd>Docente, personal auxiliar, paciente que lleva tiempo en tratamiento. Este grupo presenta 2.</dd>
+          <dt>El reto</dt><dd>Son parte del lugar, así que les costará ver como extraño lo que ya es rutina.</dd>
+        </dl>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section class="slide" id="campo" data-title="El trabajo de campo" hidden>
+      <p class="eyebrow">Atencio Ramírez et al. (2011, pp. 9, 14–16)</p>
+      <h2>Cuatro preguntas antes de salir al campo</h2>
+      <details open><summary>¿Para qué salir al campo?</summary><div><p>Para conocer de primera mano un escenario y su comunidad. El campo funciona como un laboratorio hecho de vivencias cotidianas. En nuestro caso: entender las prácticas culturales de un parque o de la clínica.</p></div></details>
+      <details><summary>¿A dónde ir?</summary><div><p>Lo define el objetivo. Se recomienda una visita previa de reconocimiento y empezar por lo cercano, por el propio entorno. En el parque: la cancha, la zona de máquinas, los juegos infantiles, un grupo de entrenamiento. En la clínica: la sala de espera, la admisión, los pasillos, el momento de cambio de turno.</p></div></details>
+      <details><summary>¿Qué hacer?</summary><div><p>Observar, conversar, registrar. Los objetivos deben ser pocos, concretos y conocidos por todo el grupo. No hace falta saturarse de teoría antes de salir.</p></div></details>
+      <details><summary>¿Cómo hacerlo?</summary><div><p>Con técnicas definidas (observación, entrevista, historias de vida), instrumentos preparados (guía de observación, guía de pautas, diario de campo) y roles claros dentro del equipo.</p></div></details>
+
+      <h3 style="margin-top:24px">Las tres fases</h3>
+      <div class="phases" role="tablist" id="phaseTabs">
+        <button role="tab" aria-selected="true" data-p="f1">Antes<small>preparación</small></button>
+        <button role="tab" aria-selected="false" data-p="f2">Durante<small>en el campo</small></button>
+        <button role="tab" aria-selected="false" data-p="f3">Después<small>análisis</small></button>
+      </div>
+      <div class="sheet" id="f1" role="tabpanel"><ul class="ticks">
+        <li>Elegir el escenario, delimitar el grupo o la práctica, y justificar por qué.</li>
+        <li>Hacer una visita de reconocimiento.</li>
+        <li>Buscar información previa sobre el grupo o el lugar.</li>
+        <li>Preparar la guía de observación y la guía de entrevista.</li>
+        <li>Pedir permisos (en la clínica, por escrito a la dirección) y preparar los consentimientos informados.</li>
+        <li>Repartir roles: quién observa, quién entrevista, quién graba, quién toma notas.</li>
+      </ul></div>
+      <div class="sheet" id="f2" role="tabpanel" hidden><ul class="ticks">
+        <li>Presentarse y explicar con claridad qué se va a hacer, sin crear falsas expectativas.</li>
+        <li>Negociar el acceso: estar presente no significa que todos quieran hablar.</li>
+        <li>Observar con los cinco sentidos y dibujar un croquis del espacio.</li>
+        <li>Escribir el diario de campo el mismo día, con fecha, hora y lugar.</li>
+        <li>Aplicar la entrevista y registrar las historias de vida con permiso.</li>
+      </ul></div>
+      <div class="sheet" id="f3" role="tabpanel" hidden><ul class="ticks">
+        <li>Ordenar notas, transcripciones, fotos y audios.</li>
+        <li>Buscar patrones: lo que se repite, lo que sorprende, lo que se contradice.</li>
+        <li>Contrastar lo que la gente dice con lo que se observó.</li>
+        <li>Discutir en equipo y escribir el informe.</li>
+        <li>Compartir los resultados, también con quienes participaron.</li>
+      </ul></div>
+    </section>
+
+    <!-- 8 -->
+    <section class="slide" id="tecnicas" data-title="Técnicas de recolección" hidden>
+      <p class="eyebrow">Cómo recoger la información</p>
+      <h2>Las técnicas del proyecto</h2>
+      <div role="tablist" aria-label="Técnicas" id="techTabs">
+        <button class="chip" role="tab" aria-selected="true" data-p="t1">Observación participante</button>
+        <button class="chip" role="tab" aria-selected="false" data-p="t2">Entrevista semiestructurada</button>
+        <button class="chip" role="tab" aria-selected="false" data-p="t3">Historia de vida</button>
+        <button class="chip" role="tab" aria-selected="false" data-p="t4">Diario de campo</button>
+      </div>
+      <div class="sheet panel" id="t1" role="tabpanel">
+        <h3>Observación participante</h3>
+        <p>Estar ahí, compartir la actividad y mirar con atención. Se basa en lo que el investigador presencia, no en lo que la gente dice que hace.</p>
+        <p><b>A diferencia de la mirada cotidiana, la observación científica debe:</b></p>
+        <ul class="ticks">
+          <li>Orientarse a un objetivo concreto.</li>
+          <li>Planificarse: fases, lugares, aspectos y personas.</li>
+          <li>Percibir con los cinco sentidos.</li>
+          <li>Relacionarse con ideas y teorías sociales.</li>
+          <li>Someterse a controles de veracidad y precisión.</li>
+        </ul>
+        <p class="src">Atencio Ramírez et al. (2011, p. 11).</p>
+      </div>
+      <div class="sheet panel" id="t2" role="tabpanel" hidden>
+        <h3>Entrevista semiestructurada</h3>
+        <p>Una conversación con propósito. Se prepara una <b>guía de pautas</b> con temas y subtemas, pero no un cuestionario cerrado: se deja que la persona cuente su experiencia y aparezcan temas nuevos (Atencio Ramírez et al., 2011, pp. 12–13).</p>
+        <dl class="kv">
+          <dt>Sí</dt><dd>Preguntas abiertas: “¿Cómo es un día normal para usted aquí?”, “Cuénteme la primera vez que…”.</dd>
+          <dt>No</dt><dd>Preguntas que inducen: “¿Verdad que los pacientes siempre llegan con miedo?”</dd>
+          <dt>Rol</dt><dd>Organizar la conversación sin dirigirla; animar a narrar sin sesgar.</dd>
+          <dt>Recuerda</dt><dd>La entrevista también es una situación de observación (Guber, 1991, como se citó en Atencio Ramírez et al., 2011, p. 13): anota gestos, silencios y contexto.</dd>
+        </dl>
+      </div>
+      <div class="sheet panel" id="t3" role="tabpanel" hidden>
+        <h3>Historia de vida</h3>
+        <p>Relato en primera persona de experiencias significativas. Muestra cómo una trayectoria personal se cruza con la historia del grupo o de la institución (Sautu, 1999, como se citó en Atencio Ramírez et al., 2011, pp. 12–13).</p>
+        <dl class="kv">
+          <dt>En el proyecto</dt><dd>Un video con 3 experiencias de vida, de máximo 5 minutos cada una. El grupo de Odontología presenta 2.</dd>
+          <dt>Ejemplos</dt><dd>En el parque: entrenador o entrenadora, adulto mayor que va a diario, vendedor o vendedora. En la clínica: docente, personal auxiliar, paciente con un tratamiento largo.</dd>
+          <dt>Recuerda</dt><dd>Escuchar más de lo que se pregunta y pedir consentimiento para grabar y publicar.</dd>
+        </dl>
+      </div>
+      <div class="sheet panel" id="t4" role="tabpanel" hidden>
+        <h3>Diario y notas de campo</h3>
+        <p>El registro de todo lo ocurrido y de las impresiones del investigador. Captura lo no verbal, lo emocional y el contexto (Atencio Ramírez et al., 2011, p. 13).</p>
+        <dl class="kv">
+          <dt>Encabezado</dt><dd>Fecha, hora, lugar, quiénes estaban, qué rol tuviste.</dd>
+          <dt>Cuerpo</dt><dd>Descripción detallada de lo que viste y oíste.</dd>
+          <dt>Margen</dt><dd>Tus interpretaciones, dudas y emociones, separadas de la descripción.</dd>
+          <dt>Regla de oro</dt><dd>Escríbelo el mismo día, porque con el paso de los días se olvidan detalles.</dd>
+        </dl>
+      </div>
+    </section>
+
+    <!-- 9 -->
+    <section class="slide" id="sentidos" data-title="Observar con los 5 sentidos" hidden>
+      <p class="eyebrow">Observación perceptiva · Atencio Ramírez et al. (2011, p. 12)</p>
+      <h2>Observar con los cinco sentidos</h2>
+      <p>Escenarios de ejemplo: <b>el parque un sábado a las 7:00 a. m.</b> y <b>la sala de espera de la clínica a las 10:00 a. m.</b> Elige un sentido y mira qué podrías registrar.</p>
+      <div class="senses" id="senses">
+        <button type="button" data-s="vista" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>Vista</button>
+        <button type="button" data-s="oido" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M7 9a5 5 0 0 1 10 0c0 3-3 4-3 7a3 3 0 0 1-6 0"/><path d="M10 10a2 2 0 0 1 4 0"/></svg>Oído</button>
+        <button type="button" data-s="olfato" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3c-1 4-3 7-3 11a3 3 0 0 0 6 0"/><path d="M9 17c-2 0-3 1-3 2M15 17c2 0 3 1 3 2"/></svg>Olfato</button>
+        <button type="button" data-s="gusto" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 11h16a8 8 0 0 1-16 0z"/><path d="M8 7c0-2 2-2 2-4M13 7c0-2 2-2 2-4"/></svg>Gusto</button>
+        <button type="button" data-s="tacto" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M8 12V5a1.5 1.5 0 0 1 3 0v6M11 11V4a1.5 1.5 0 0 1 3 0v7M14 11V6a1.5 1.5 0 0 1 3 0v8a6 6 0 0 1-6 6c-3 0-4-2-6-5l-1-2a1.5 1.5 0 0 1 2.5-1.5L8 13"/></svg>Tacto</button>
+      </div>
+      <div class="sheet" style="margin-top:14px" id="senseOut" aria-live="polite">
+        <p class="hand" style="margin:0">Toca un sentido para ver ejemplos de registro.</p>
+      </div>
+      <div class="sheet" style="margin-top:14px">
+        <h3>Tres preguntas para el croquis del lugar</h3>
+        <p class="src">Silverman (1993, p. 108, como se citó en Atencio Ramírez et al., 2011, p. 12).</p>
+        <ul class="ticks">
+          <li>¿Qué actividades se permiten en este espacio y cuáles no?</li>
+          <li>¿Cómo usan las personas cada parte del lugar?</li>
+          <li>¿Quiénes se comportan de forma diferente y en qué?</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 10 -->
+    <section class="slide" id="juego" data-title="Juego: ¿describir o interpretar?" hidden>
+      <p class="eyebrow">Actividad interactiva</p>
+      <h2>¿Descripción o interpretación?</h2>
+      <p>En el diario de campo hay que separar <b>lo que se ve</b> de <b>lo que uno cree que significa</b>. Clasifica cada nota.</p>
+      <div class="sheet stack">
+        <div class="row" style="justify-content:space-between">
+          <span class="src" id="gameCount">Nota 1 de 8</span>
+          <span><span class="score" id="gameScore">0</span> <span class="src">aciertos</span></span>
+        </div>
+        <div class="meter"><i id="gameBar"></i></div>
+        <p class="game-card" id="gameText"></p>
+        <div class="row" id="gameBtns">
+          <button class="btn" type="button" data-a="d">Descripción</button>
+          <button class="btn" type="button" data-a="i">Interpretación</button>
+        </div>
+        <p class="feedback" id="gameFb" aria-live="polite"></p>
+        <div class="row"><button class="btn primary" type="button" id="gameNext" hidden>Siguiente nota →</button></div>
+      </div>
+    </section>
+
+    <!-- 11 -->
+    <section class="slide" id="etica" data-title="Ética en el campo" hidden>
+      <p class="eyebrow">Antes que todo</p>
+      <h2>Ética del trabajo con personas</h2>
+      <div class="grid2">
+        <div class="sheet"><h3>Consentimiento informado</h3><p>Cada persona sabe qué se investiga, para qué, cómo se usará lo que diga y que puede retirarse. Se firma para la entrevista, las historias de vida y los audios (Ministerio de Salud de Colombia, 1993, arts. 14–15).</p></div>
+        <div class="sheet"><h3>Acceso negociado</h3><p>Entrar al lugar no es lo mismo que acceder a la información. No todos querrán ser observados ni hablar, y hay que respetarlo (Atencio Ramírez et al., 2011, p. 11).</p></div>
+        <div class="sheet"><h3>Sin falsas expectativas</h3><p>Aclarar que es un ejercicio académico: no resolveremos problemas ni prometeremos cambios que no dependen de nosotros.</p></div>
+        <div class="sheet"><h3>Confidencialidad y devolución</h3><p>Proteger nombres si la persona lo pide, cuidar fotos y audios, y compartir los resultados con quienes participaron.</p></div>
+        <div class="sheet"><h3>En el parque</h3><p>Los menores necesitan la firma de su acudiente y deben querer participar; sus datos tienen protección especial (Congreso de la República de Colombia, 2012, art. 7). Prefieran fotos del lugar, sin rostros reconocibles.</p></div>
+        <div class="sheet"><h3>En la clínica</h3><p>Se necesita autorización escrita de la dirección. No se observa la atención sin consentimiento ni aval docente, y no se consultan historias clínicas, porque los datos de salud son sensibles (Congreso de la República de Colombia, 2012, art. 5).</p></div>
+      </div>
+      <div class="sheet" style="margin-top:16px">
+        <span class="imp-tag">¡Importante!</span><h3>Reflexividad</h3>
+        <p style="margin:0">El investigador vuelve sobre sí mismo y se pregunta cómo su presencia, su edad, su carrera o sus prejuicios influyen en lo que observa y lo que la gente le cuenta (Guber, 2001). Pesa en los dos campos: <mark>en la clínica ustedes hacen parte del lugar que estudian, y al parque llegan con la mirada de su profesión</mark>.</p>
+      </div>
+    </section>
+
+    <!-- 12 -->
+    <section class="slide" id="escritura" data-title="Escribir la etnografía" hidden>
+      <p class="eyebrow">Van Maanen (2011) · Taller de escritura etnográfica (2016)</p>
+      <h2>Las mismas escenas, dos formas de contarlas</h2>
+      <p>Toda etnografía combina cuatro elementos: <b>lo observado</b>, <b>el observador</b>, <b>el relato</b> y <b>los lectores</b>. El estilo de escritura es una decisión.</p>
+      <div role="tablist" aria-label="Estilos narrativos" id="styleTabs">
+        <button class="chip" role="tab" aria-selected="true" data-p="s1">Relato realista</button>
+        <button class="chip" role="tab" aria-selected="false" data-p="s2">Relato confesional</button>
+      </div>
+      <div class="sheet panel" id="s1" role="tabpanel">
+        <p class="note"><b>Parque.</b> “Entre las 6:00 y las 8:00 a. m. el parque alcanza su máxima ocupación. Los adultos mayores caminan en parejas por el borde; los grupos de entrenamiento ocupan la cancha central. ‘Aquí cada quien ya sabe cuál es su pedazo’, explica un entrenador.”</p>
+        <p class="note"><b>Clínica.</b> “Entre las 9:00 y las 11:00 a. m. la sala de espera permanece llena. Los pacientes nuevos preguntan en admisión; los antiguos saludan a las auxiliares por su nombre. ‘Después de tantas citas, uno ya es de la casa’, comenta una paciente.”</p>
+        <dl class="kv">
+          <dt>Voz</dt><dd>Tercera persona, tono neutral, el autor casi no aparece.</dd>
+          <dt>Énfasis</dt><dd>Lo rutinario, los detalles, la voz de los participantes en citas.</dd>
+          <dt>Riesgo</dt><dd>Parecer que el autor tiene la última palabra y ocultar cómo obtuvo los datos.</dd>
+        </dl>
+      </div>
+      <div class="sheet panel" id="s2" role="tabpanel" hidden>
+        <p class="note"><b>Parque.</b> “El primer sábado me puse a estirar en la mitad de la cancha, que parecía libre. A los pocos minutos entendí que no estaba libre: estaba ‘apartada’. Nadie me dijo nada, pero las miradas bastaron. Desde entonces pregunto antes de ocupar un espacio.”</p>
+        <p class="note"><b>Clínica.</b> “Llevaba meses entrando a la clínica con bata. El día que me senté sin ella en la sala de espera, nadie me saludó y por primera vez noté el ruido de la fresa desde afuera.”</p>
+        <dl class="kv">
+          <dt>Voz</dt><dd>Primera persona, el etnógrafo se muestra con dudas y errores.</dd>
+          <dt>Énfasis</dt><dd>Cómo se hizo el trabajo de campo y cómo cambió la mirada del investigador.</dd>
+          <dt>Riesgo</dt><dd>Hablar más de uno mismo que del grupo estudiado.</dd>
+        </dl>
+      </div>
+      <p class="src" style="margin-top:12px">Van Maanen (2011) describe también el relato impresionista, que reconstruye momentos vívidos como una escena literaria. Los ejemplos de esta lámina son ilustrativos.</p>
+    </section>
+
+    <!-- 13 -->
+    <section class="slide" id="ruta" data-title="Ruta del primer informe" hidden>
+      <p class="eyebrow">Actividad 3 · Primer informe de etnografía</p>
+      <h2>La ruta de nuestro proyecto</h2>
+      <p>Marca lo que tu grupo ya completó. Se guarda en este navegador.</p>
+      <div class="sheet" id="checklist"><p class="cl-title">Lista de <span class="hand">chequeo</span></p></div>
+      <p class="src" style="margin-top:10px">Requisitos: trabajo colaborativo por grupos; se evalúa con la matriz de valoración de la Ruta de Aprendizaje. Lecturas de apoyo: Atencio Ramírez et al. (2011) y Taller de escritura etnográfica (2016). Opcional: capítulo 3 de Organización de las Naciones Unidas para la Alimentación y la Agricultura (2004), para preparar la salida y la entrevista.</p>
+    </section>
+
+    <!-- 14 -->
+    <section class="slide" id="quiz" data-title="Comprueba lo aprendido" hidden>
+      <p class="eyebrow">Cierre</p>
+      <h2>¿Listos para salir al campo?</h2>
+      <div class="sheet" id="quizBox"></div>
+      <div class="row" style="margin-top:14px; justify-content:space-between">
+        <p class="score" id="quizScore" style="margin:0">0 / 6</p>
+        <button class="btn" type="button" id="quizReset">Reiniciar preguntas</button>
+      </div>
+    </section>
+
+    <!-- 15 -->
+    <section class="slide" id="referencias" data-title="Referencias" hidden>
+      <p class="eyebrow">Normas APA, 7.ª edición</p>
+      <h2>Referencias</h2>
+      <div class="sheet">
+        <ul class="refs">
+          <li>Atencio Ramírez, M., Gouveia, E. L., y Lozada, J. M. (2011). El trabajo de campo estrategia metodológica para estudiar las comunidades. <i>Omnia</i>, <i>17</i>(3), 9–22. https://www.redalyc.org/articulo.oa?id=73720790002</li>
+          <li>Congreso de la República de Colombia. (2012, 17 de octubre). <i>Ley 1581 de 2012: Por la cual se dictan disposiciones generales para la protección de datos personales</i>. https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=49981</li>
+          <li>Geertz, C. (1973). <i>The interpretation of cultures: Selected essays</i>. Basic Books.</li>
+          <li>Guber, R. (2001). <i>La etnografía: Método, campo y reflexividad</i>. Norma.</li>
+          <li>Guber, R. (2004). <i>El salvaje metropolitano: Reconstrucción del conocimiento social en el trabajo de campo</i>. Paidós. (Trabajo original publicado en 1991)</li>
+          <li>Lévi-Strauss, C. (1995). <i>Antropología estructural</i> (E. Verón, Trad.). Paidós. (Trabajo original publicado en 1958)</li>
+          <li>Lins Ribeiro, G. (1989). Descotidianizar: Extrañamiento y conciencia práctica, un ensayo sobre la perspectiva antropológica. <i>Cuadernos de Antropología Social</i>, <i>2</i>(1), 65–69.</li>
+          <li>Malinowski, B. (1922). <i>Argonauts of the Western Pacific: An account of native enterprise and adventure in the archipelagoes of Melanesian New Guinea</i>. George Routledge &amp; Sons.</li>
+          <li>Ministerio de Salud de Colombia. (1993, 4 de octubre). <i>Resolución 8430 de 1993: Por la cual se establecen las normas científicas, técnicas y administrativas para la investigación en salud</i>. https://normograma.invima.gov.co/compilacion/docs/resolucion_minsalud_r8430_93.htm</li>
+          <li>Organización de las Naciones Unidas para la Alimentación y la Agricultura. (2004). <i>Inventario forestal nacional: Manual de campo. Modelo</i> (Documento de trabajo 94/S). https://www.fao.org/4/ae578s/AE578S00.htm</li>
+          <li>Pike, K. L. (1967). <i>Language in relation to a unified theory of the structure of human behavior</i> (2.ª ed.). Mouton.</li>
+          <li>Taller de escritura etnográfica. (2016, 15 de julio). <i>1. Introducción: Sobre la escritura etnográfica</i>. https://tallerdeescrituraetnografica.wordpress.com/2016/07/15/1-introduccion-sobre-la-escritura-etnografica/</li>
+          <li>Van Maanen, J. (2011). <i>Tales of the field: On writing ethnography</i> (2.ª ed.). University of Chicago Press.</li>
+        </ul>
+      </div>
+      <p class="src" style="margin-top:12px">Sautu (1997, 1999), Silverman (1993) y Guber (1991) se citan a través de Atencio Ramírez et al. (2011), por lo que no se listan por separado.</p>
+    </section>
+
+  </main>
+</div>
+
+<div class="progress" aria-hidden="true"><i id="bar"></i></div>
+<div class="pager">
+  <button class="btn menu-btn" type="button" id="menuBtn" aria-controls="index" aria-expanded="false">Índice</button>
+  <button class="btn" type="button" id="prev">← Anterior</button>
+  <span class="count" id="count">1 / 14</span>
+  <button class="btn primary" type="button" id="next">Siguiente →</button>
+</div>
+
+<script>
+(function(){
+  const store = {
+    get(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } },
+    set(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+  };
+
+  /* ---------- Navegación ---------- */
+  const slides = [...document.querySelectorAll('.slide')];
+  const toc = document.getElementById('toc');
+  const nav = document.getElementById('index');
+  const menuBtn = document.getElementById('menuBtn');
+  let cur = 0;
+  slides.forEach((s,i)=>{
+    const li = document.createElement('li');
+    const b = document.createElement('button');
+    b.type='button';
+    b.innerHTML = '<span class="n">'+String(i+1).padStart(2,'0')+'</span><span>'+s.dataset.title+'</span>';
+    b.addEventListener('click',()=>{ go(i); nav.classList.remove('open'); menuBtn.setAttribute('aria-expanded','false'); });
+    li.appendChild(b); toc.appendChild(li);
+  });
+  const tocBtns = [...toc.querySelectorAll('button')];
+  function go(i, push){
+    cur = Math.max(0, Math.min(slides.length-1, i));
+    slides.forEach((s,j)=> s.hidden = j!==cur);
+    tocBtns.forEach((b,j)=> b.setAttribute('aria-current', j===cur ? 'true':'false'));
+    document.getElementById('count').textContent = (cur+1)+' / '+slides.length;
+    document.getElementById('bar').style.width = ((cur+1)/slides.length*100)+'%';
+    document.getElementById('prev').disabled = cur===0;
+    document.getElementById('next').disabled = cur===slides.length-1;
+    if(push!==false){ try{ history.replaceState(null,'','#'+slides[cur].id); }catch(e){} }
+    window.scrollTo(0,0);
+  }
+  document.getElementById('prev').onclick=()=>go(cur-1);
+  document.getElementById('next').onclick=()=>go(cur+1);
+  menuBtn.onclick=()=>{ const o = nav.classList.toggle('open'); menuBtn.setAttribute('aria-expanded', String(o)); };
+  document.addEventListener('keydown',e=>{
+    if(/INPUT|TEXTAREA/.test(document.activeElement.tagName)) return;
+    if(e.key==='ArrowRight'||e.key==='PageDown') go(cur+1);
+    if(e.key==='ArrowLeft'||e.key==='PageUp') go(cur-1);
+  });
+  const start = slides.findIndex(s=>'#'+s.id===location.hash);
+  go(start>=0?start:0, false);
+
+  /* ---------- Pestañas genéricas ---------- */
+  function tabs(listId){
+    const list = document.getElementById(listId);
+    const btns = [...list.querySelectorAll('[role="tab"]')];
+    btns.forEach(b=>b.addEventListener('click',()=>{
+      btns.forEach(x=>{ x.setAttribute('aria-selected', String(x===b)); document.getElementById(x.dataset.p).hidden = x!==b; });
+    }));
+  }
+  ['discTabs','fieldTabs','phaseTabs','techTabs','styleTabs'].forEach(tabs);
+
+  /* ---------- Etimología ---------- */
+  const meanings = {
+    ethnos:'<h3>éthnos (griego): pueblo, nación, grupo humano</h3><p>Se refiere a un conjunto de personas que comparten formas de vida, costumbres o identidad. En nuestro proyecto, puede ser quienes entrenan cada mañana en un parque o quienes comparten la rutina de una clínica.</p>',
+    graphein:'<h3>gráphein (griego): escribir, describir</h3><p>La etnografía termina siempre en un texto. Por eso no basta con observar: hay que registrar y escribir. Compárala con <b>etno-logía</b>, donde <i>lógos</i> significa estudio o tratado.</p>'
+  };
+  const wbtns = [...document.querySelectorAll('#word button')];
+  wbtns.forEach(b=>b.addEventListener('click',()=>{
+    wbtns.forEach(x=>x.setAttribute('aria-pressed', String(x===b)));
+    document.getElementById('meaning').innerHTML = meanings[b.dataset.k];
+  }));
+
+  /* ---------- Tarjetas ---------- */
+  const concepts = [
+    ['Cultura','¿Qué estudiamos?','El conjunto de significados, prácticas, normas y objetos que un grupo comparte y que orientan cómo actúa. Se aprende, no se hereda biológicamente.'],
+    ['Trabajo de campo','¿Dónde ocurre?','Ir al lugar donde vive o actúa el grupo y permanecer allí un tiempo para recoger información de primera mano.'],
+    ['Perspectiva émica','La mirada de adentro','Cómo las propias personas explican y nombran lo que hacen. El “punto de vista del nativo”.'],
+    ['Perspectiva ética','La mirada de afuera','Cómo el investigador analiza y ordena lo observado con conceptos de las ciencias sociales.'],
+    ['Informante clave','¿A quién preguntar?','Persona que conoce muy bien el grupo o el lugar y ayuda a entenderlo y a acceder a él. En el parque: un entrenador o un vendedor antiguo. En la clínica: una auxiliar con años allí.'],
+    ['Extrañamiento','La actitud','Tomar distancia de lo que nos parece normal para verlo como algo que tiene reglas y sentido propios.'],
+    ['Descripción densa','Geertz','No solo contar qué pasó, sino explicar qué significa para quienes lo hacen. Un guiño no es solo mover un párpado.'],
+    ['Reflexividad','Mirarse a sí mismo','Examinar críticamente cómo la presencia y la historia del investigador influyen en el estudio y en sus interacciones.']
+  ];
+  const cardsEl = document.getElementById('cards');
+  concepts.forEach(([t,h,d])=>{
+    const b = document.createElement('button');
+    b.type='button'; b.className='flip'; b.setAttribute('aria-pressed','false');
+    b.setAttribute('aria-label', t+'. Toca para ver la definición');
+    b.innerHTML = '<div class="flip-inner"><div class="face front"><span class="term">'+t+'</span><span class="hint">'+h+' ↻</span></div><div class="face back"><strong>'+t+'</strong><span>'+d+'</span></div></div>';
+    b.addEventListener('click',()=>b.setAttribute('aria-pressed', b.getAttribute('aria-pressed')==='true'?'false':'true'));
+    cardsEl.appendChild(b);
+  });
+
+  /* ---------- Sentidos ---------- */
+  const senses = {
+    vista:['Vista','Quién ocupa cada zona, ropa deportiva, edades, carteles y avisos, por dónde se camina y por dónde no.','Batas y uniformes, quién se sienta con quién, gestos mientras se espera, carteles y avisos.'],
+    oido:['Oído','Silbatos, música de los entrenamientos, gritos de juego, saludos, en qué momento baja o sube el ruido.','Volumen de las voces, el llamado de los turnos, el sonido de la fresa, palabras técnicas y cotidianas.'],
+    olfato:['Olfato','Pasto recién cortado, comida de los puestos, sudor, humo de la calle; ¿cambia según la hora o la zona?','Desinfectante y materiales dentales; ¿cambia entre la sala de espera y los pasillos?'],
+    gusto:['Gusto','Qué se vende y qué se comparte: agua, jugos, empanadas; la sed después de entrenar.','Lo que comentan los pacientes sobre la anestesia o el enjuague, y lo que evitan comer antes de la cita.'],
+    tacto:['Tacto','Sol y viento, superficie de la cancha, metal de las máquinas, contacto entre quienes juegan.','Temperatura de la sala, sillas de espera, distancia entre las personas, saludos de mano.']
+  };
+  const sbtns = [...document.querySelectorAll('#senses button')];
+  sbtns.forEach(b=>b.addEventListener('click',()=>{
+    sbtns.forEach(x=>x.setAttribute('aria-pressed', String(x===b)));
+    const [t,parque,clinica] = senses[b.dataset.s];
+    document.getElementById('senseOut').innerHTML = '<h3>'+t+'</h3><p><b>Parque:</b> '+parque+'</p><p style="margin:0"><b>Clínica:</b> '+clinica+'</p>';
+  }));
+
+  /* ---------- Juego ---------- */
+  const notes = [
+    ['Doce personas trotan alrededor de la cancha a las 6:35 a. m.','d','Es un hecho observable y verificable: cantidad, lugar y hora.'],
+    ['Los adultos mayores del parque se sienten excluidos de la cancha.','i','“Se sienten” es una suposición sobre emociones. Habría que preguntarles.'],
+    ['Una paciente mira el reloj tres veces en la sala de espera.','d','Describe una acción concreta sin juzgarla.'],
+    ['La sala de espera es el lugar más angustiante de la clínica.','i','Es una conclusión general. Puede surgir del análisis, pero no es una observación.'],
+    ['Un entrenador dice: “aquí cada quien ya sabe cuál es su pedazo”.','d','Es una cita textual de lo que se escuchó: registro descriptivo.'],
+    ['El celador del parque es estricto porque no le gustan los jóvenes.','i','Atribuye una intención que no se ha observado.'],
+    ['Entre las 10:00 y las 10:15 a. m. llaman a cuatro pacientes por su nombre.','d','Dato concreto de tiempo y espacio.'],
+    ['El paciente no hace preguntas porque le tiene miedo al docente.','i','La causa (“porque…”) es una interpretación que hay que comprobar.']
+  ];
+  let gi=0, gs=0;
+  const gText=document.getElementById('gameText'), gFb=document.getElementById('gameFb'), gNext=document.getElementById('gameNext');
+  const gBtns=[...document.querySelectorAll('#gameBtns button')];
+  function gRender(){
+    if(gi>=notes.length){
+      gText.textContent = 'Terminaste: '+gs+' de '+notes.length+' aciertos.';
+      gFb.className='feedback'; gFb.textContent = gs>=6 ? 'Muy bien: ya distingues lo que ves de lo que supones.' : 'Repasa: una descripción se puede comprobar mirando; una interpretación necesita preguntar o analizar.';
+      gBtns.forEach(b=>b.hidden=true); gNext.hidden=false; gNext.textContent='Jugar otra vez';
+      document.getElementById('gameBar').style.width='100%';
+      return;
+    }
+    gText.textContent='“'+notes[gi][0]+'”';
+    document.getElementById('gameCount').textContent='Nota '+(gi+1)+' de '+notes.length;
+    document.getElementById('gameBar').style.width=(gi/notes.length*100)+'%';
+    gFb.textContent=''; gFb.className='feedback';
+    gBtns.forEach(b=>{b.hidden=false; b.disabled=false;}); gNext.hidden=true; gNext.textContent='Siguiente nota →';
+  }
+  gBtns.forEach(b=>b.addEventListener('click',()=>{
+    const ok = b.dataset.a===notes[gi][1];
+    if(ok) gs++;
+    document.getElementById('gameScore').textContent=gs;
+    gFb.className='feedback '+(ok?'ok':'bad');
+    gFb.textContent=(ok?'Correcto. ':'No exactamente. ')+notes[gi][2];
+    gBtns.forEach(x=>x.disabled=true); gNext.hidden=false;
+  }));
+  gNext.addEventListener('click',()=>{
+    if(gi>=notes.length){ gi=0; gs=0; document.getElementById('gameScore').textContent=0; }
+    else gi++;
+    gRender();
+  });
+  gRender();
+
+  /* ---------- Checklist ---------- */
+  const steps = [
+    ['Delimitación del objeto de estudio','Elegir el escenario y el grupo o la práctica, justificar por qué y formular una pregunta inicial.','Para hacer 1'],
+    ['Conocer el escenario','Durante un mes: observar, participar y registrar las prácticas culturales en el diario de campo, en distintos días y horarios. Incluir un croquis del lugar.','Para hacer 2'],
+    ['Entrevista etnográfica','Formular una entrevista semiestructurada y aplicarla a una persona del escenario.','Para hacer 3'],
+    ['Historias de vida','Video con 3 experiencias de vida (2 en el grupo de Odontología), máximo 5 minutos cada una.','Para hacer 4'],
+    ['Experiencias etnográficas','Archivo de Drive, entregado en el aula virtual, con la entrevista, las historias de vida y los testimonios en audio de los estudiantes del proyecto.','Para hacer 5'],
+    ['Consentimientos informados','Elaborados con la guía del curso y firmados para todas las técnicas aplicadas.','Para hacer 6']
+  ];
+  const saved = store.get('etnoU-check') || {};
+  const cl = document.getElementById('checklist');
+  steps.forEach(([t,d,tag],i)=>{
+    const row=document.createElement('div'); row.className='check'+(saved[i]?' done':'');
+    row.innerHTML='<input type="checkbox" id="chk'+i+'"'+(saved[i]?' checked':'')+'><label for="chk'+i+'"><b>'+t+'</b><span class="tag">'+tag+'</span><br>'+d+'</label>';
+    row.querySelector('input').addEventListener('change',e=>{ saved[i]=e.target.checked; row.classList.toggle('done',e.target.checked); store.set('etnoU-check',saved); });
+    cl.appendChild(row);
+  });
+
+  /* ---------- Quiz ---------- */
+  const qs = [
+    ['¿Qué significa la raíz griega “gráphein” en etnografía?',['Estudiar','Escribir o describir','Comparar'],1,'La etnografía termina en un texto escrito; “lógos” (estudio) es la raíz de etnología.'],
+    ['¿Cuál es la diferencia principal entre etnografía y etnología?',['La etnografía describe un grupo; la etnología compara muchos','Son sinónimos','La etnología solo estudia el pasado'],0,'La etnología trabaja sobre muchas etnografías para comparar y teorizar.'],
+    ['¿Quién popularizó la observación participante con su trabajo en las islas Trobriand?',['Clifford Geertz','Bronisław Malinowski','John Van Maanen'],1,'Malinowski, en Los argonautas del Pacífico occidental (1922).'],
+    ['¿Cuál de estas preguntas es adecuada para una entrevista semiestructurada?',['¿Verdad que el parque es inseguro de noche?','¿Entrena aquí? Responda sí o no','¿Cómo es un día normal para usted en este parque?'],2,'Es abierta y no induce la respuesta.'],
+    ['La perspectiva “émica” es…',['La explicación que dan los propios participantes','La teoría del investigador','Un tipo de encuesta'],0,'Émico = desde adentro; ético = desde el análisis del investigador.'],
+    ['¿Para qué técnicas del proyecto se necesita consentimiento informado?',['Solo para los videos','Para todas las técnicas desarrolladas','Para ninguna, es un trabajo de clase'],1,'Así lo pide la Actividad 3: para todas las técnicas.']
+  ];
+  const qb=document.getElementById('quizBox'), qsEl=document.getElementById('quizScore');
+  let qScore=0;
+  function buildQuiz(){
+    qb.innerHTML=''; qScore=0; qsEl.textContent='0 / '+qs.length;
+    qs.forEach(([q,opts,right,why],i)=>{
+      const d=document.createElement('div'); d.className='q';
+      d.innerHTML='<p class="qt">'+(i+1)+'. '+q+'</p><div class="opts"></div><p class="why" hidden></p>';
+      const box=d.querySelector('.opts'), w=d.querySelector('.why');
+      opts.forEach((o,j)=>{
+        const b=document.createElement('button'); b.type='button'; b.textContent=o;
+        b.addEventListener('click',()=>{
+          [...box.children].forEach((x,k)=>{ x.disabled=true; if(k===right) x.classList.add('right'); });
+          if(j===right){ qScore++; } else b.classList.add('wrong');
+          w.hidden=false; w.textContent=why; qsEl.textContent=qScore+' / '+qs.length;
+        });
+        box.appendChild(b);
+      });
+      qb.appendChild(d);
+    });
+  }
+  document.getElementById('quizReset').onclick=buildQuiz;
+  buildQuiz();
+})();
+</script>
+
+</body></html>
